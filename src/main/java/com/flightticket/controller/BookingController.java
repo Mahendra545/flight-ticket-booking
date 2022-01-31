@@ -24,22 +24,22 @@ public class BookingController {
 
 	@Autowired
 	BookingService bookingService;
-	
+
 	@Autowired
 	JwtTokenUtil jwtTokenUtil;
-	
+
 	@Operation(summary = "Get booking history",description = "Get a list of tickets booking history",tags="Get")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Found the ticket booking history",
-			content= {@Content(mediaType = "application/json",schema =@Schema(implementation =BookingHistory.class ))}),
+					content= {@Content(mediaType = "application/json",schema =@Schema(implementation =BookingHistory.class ))}),
 			@ApiResponse(responseCode = "404" , description = "Ticket booking history not found",content = @Content)
-						})
+	})
 	@SecurityRequirement(name = "flight")
-	 @PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/booking")
 	public BookingHistory getBookingHistory(@RequestHeader (name="Authorization") String token){
 		String userName = jwtTokenUtil.getUsernameFromToken(token.replace(TOKEN_PREFIX,""));
 		return bookingService.getBookingHistory(userName);
 	}
-	
+
 }

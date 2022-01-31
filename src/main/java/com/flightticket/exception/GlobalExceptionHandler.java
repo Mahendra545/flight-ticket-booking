@@ -26,8 +26,8 @@ import com.flightticket.dto.ErrorResponse;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class);
-	
-	
+
+
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<ErrorResponse> handleExceptio(EntityNotFoundException ex){
 		ErrorResponse validationErrorResponse = new ErrorResponse();
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		logger.error("Table is not existing in database");
 		return new ResponseEntity<>(validationErrorResponse,HttpStatus.NOT_FOUND);
 	}
-	
+
 	@ExceptionHandler(SQLIntegrityConstraintViolationException.class)
 	public ResponseEntity<ErrorResponse> handleExceptio(SQLIntegrityConstraintViolationException ex){
 		ErrorResponse validationErrorResponse = new ErrorResponse();
@@ -53,20 +53,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		logger.error("Please enter a valid input");
 		return new ResponseEntity<>(validationErrorResponse,HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers,
-            HttpStatus status, WebRequest request) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String message = error.getDefaultMessage();
-            errors.put(fieldName, message);
-        });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-	
+			MethodArgumentNotValidException ex, HttpHeaders headers,
+			HttpStatus status, WebRequest request) {
+		Map<String, String> errors = new HashMap<>();
+		ex.getBindingResult().getAllErrors().forEach(error -> {
+			String fieldName = ((FieldError) error).getField();
+			String message = error.getDefaultMessage();
+			errors.put(fieldName, message);
+		});
+		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+	}
+
 	@ExceptionHandler(InvalidUserCredentials.class)
 	public ResponseEntity<ErrorResponse> handleExceptio(InvalidUserCredentials ex){
 		ErrorResponse validationErrorResponse = new ErrorResponse();
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		validationErrorResponse.setMessage(ex.getMessage());
 		return new ResponseEntity<>(validationErrorResponse,HttpStatus.UNAUTHORIZED);
 	}
-	
+
 	@ExceptionHandler(NotFoundBookingHistory.class)
 	public ResponseEntity<ErrorResponse> handleExceptio(NotFoundBookingHistory ex){
 		ErrorResponse validationErrorResponse = new ErrorResponse();
@@ -82,6 +82,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		validationErrorResponse.setMessage(ex.getMessage());
 		return new ResponseEntity<>(validationErrorResponse,HttpStatus.NOT_FOUND);
 	}
-	
- 
+
+	@ExceptionHandler(MyApplicationException.class)
+	public ResponseEntity<Object> handleMyBankException(MyApplicationException ex) {
+		logger.error("Exception occured with"+ex.getLocalizedMessage());
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setMessage(ex.getMessage());
+		errorResponse.setStatusCode(500);
+		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 }
