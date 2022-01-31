@@ -91,5 +91,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorResponse.setStatusCode(500);
 		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	@ExceptionHandler(MissMatchDate.class)
+    public ResponseEntity<ErrorResponse> handleExceptio(MissMatchDate ex){
+        ErrorResponse validationErrorResponse = new ErrorResponse();
+        validationErrorResponse.setMessage(ex.getMessage());
+        validationErrorResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(validationErrorResponse,HttpStatus.BAD_REQUEST);
+    }
 
 }

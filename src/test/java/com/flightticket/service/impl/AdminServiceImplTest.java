@@ -2,7 +2,7 @@ package com.flightticket.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Date;
+import java.sql.Date;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ public class AdminServiceImplTest {
 		flightDetailsRequest.setSource("Hyderabad");
 		flightDetailsRequest.setDestination("Chennai");
 		flightDetailsRequest.setFlightName("Indigo");
-		flightDetailsRequest.setDate(new Date());
+		flightDetailsRequest.setDate(new Date(2022,01,31));
 		flightDetailsRequest.setTime("11:00");
 		Flight flights = new Flight();
 
@@ -58,7 +58,7 @@ public class AdminServiceImplTest {
 		flightDetailsRequest.setSource("Hyderabad");
 		flightDetailsRequest.setDestination("Chennai");
 		flightDetailsRequest.setFlightName("Indigo");
-		flightDetailsRequest.setDate(new Date());
+		flightDetailsRequest.setDate(new Date(2022,01,31));
 		flightDetailsRequest.setTime("11:00");
 		Flight flights = new Flight();
 

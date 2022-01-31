@@ -1,12 +1,12 @@
 package com.flightticket.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +45,7 @@ class BookingServiceImplTest {
 		
 		Flight fligh = new Flight();
 		fligh.setFlightId(1);
-		fligh.setDate(new Date());
+		fligh.setDate(new Date(2022,01,31));
 		fligh.setDestination("Bangalore");
 		fligh.setFlightName("Air545");
 		fligh.setSource("Chennai");
@@ -84,7 +84,7 @@ class BookingServiceImplTest {
 		
 		Flight fligh = new Flight();
 		fligh.setFlightId(1);
-		fligh.setDate(new Date());
+		fligh.setDate(new Date(2022,01,31));
 		fligh.setDestination("Bangalore");
 		fligh.setFlightName("Air545");
 		fligh.setSource("Chennai");
@@ -145,7 +145,7 @@ class BookingServiceImplTest {
 		
 		Flight fligh = new Flight();
 		fligh.setFlightId(1);
-		fligh.setDate(new Date());
+		fligh.setDate(new Date(2022,01,31));
 		fligh.setDestination("Bangalore");
 		fligh.setFlightName("Air545");
 		fligh.setSource("Chennai");

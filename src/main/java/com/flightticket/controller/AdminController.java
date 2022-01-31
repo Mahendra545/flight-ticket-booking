@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 
 @RestController
@@ -35,6 +36,7 @@ public class AdminController {
 			@ApiResponse(responseCode = "500" , description = "Flight Details Already exists",content = @Content)
 	})
     @PreAuthorize("hasRole('ADMIN')")
+	@SecurityRequirement(name = "flight")
 	@PostMapping("/flight")
 	public ResponseEntity<FlightDetailsResponse> addFlightDetails(@Valid @RequestBody FlightDetailsRequest flightDetailsRequest) {
 		
