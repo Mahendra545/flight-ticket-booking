@@ -20,7 +20,7 @@ import com.flightticket.exception.MyApplicationException;
 import com.flightticket.repository.FlightRepository;
 
 @ExtendWith(SpringExtension.class)
-public class AdminServiceImplTest {
+ class AdminServiceImplTest {
 
 	@InjectMocks
 	AdminServiceImpl adminServiceImpl;
@@ -29,7 +29,7 @@ public class AdminServiceImplTest {
 	FlightRepository flightsRepository;
 
 	@Test
-	public void testSaveFlightDetailsFailure() {
+	void testSaveFlightDetailsFailure() {
 		FlightDetailsRequest flightDetailsRequest = new FlightDetailsRequest();
 		flightDetailsRequest.setSource("Hyderabad");
 		flightDetailsRequest.setDestination("Chennai");
@@ -53,7 +53,7 @@ public class AdminServiceImplTest {
 
 
 	@Test
-	public void testSaveFlightDetailsSuccess() {
+	 void testSaveFlightDetailsSuccess() {
 		FlightDetailsRequest flightDetailsRequest = new FlightDetailsRequest();
 		flightDetailsRequest.setSource("Hyderabad");
 		flightDetailsRequest.setDestination("Chennai");

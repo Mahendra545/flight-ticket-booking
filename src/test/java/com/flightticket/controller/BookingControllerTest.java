@@ -1,23 +1,29 @@
-package com.flightticket.service.impl;
+package com.flightticket.controller;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.flightticket.dto.BookingDetails;
+import com.flightticket.dto.BookingDto;
 import com.flightticket.dto.BookingHistory;
 import com.flightticket.dto.FlightDetails;
 import com.flightticket.dto.PassengerDetails;
@@ -25,64 +31,28 @@ import com.flightticket.entity.Booking;
 import com.flightticket.entity.Flight;
 import com.flightticket.entity.Passenger;
 import com.flightticket.entity.User;
-import com.flightticket.exception.InvalidUserCredentials;
-import com.flightticket.repository.BookingRepository;
-import com.flightticket.repository.PassengerRepository;
-import com.flightticket.repository.UserRepository;
+
+
+
+import com.flightticket.service.BookingService;
 
 @ExtendWith(SpringExtension.class)
-class BookingServiceImplTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class BookingControllerTest {
+
+	
+	
+
+
+	@Mock
+	BookingService bookingService;
 
 	@InjectMocks
-	BookingServiceImpl bookingServiceImpl;
-	@Mock
-	UserRepository usersRepository;
-	@Mock
-	PassengerRepository passengerRepository;
-	@Mock
-	BookingRepository bookingRepository;
-	@Test
-	void getBookingHistoryException() {
-		
-		Flight fligh = new Flight();
-		fligh.setFlightId(1);
-		fligh.setDate(new Date(2022,02,01));
-		fligh.setDestination("Bangalore");
-		fligh.setFlightName("Air545");
-		fligh.setSource("Chennai");
-		fligh.setTime("8:30");
-		Booking booking = new Booking();
-		booking.setBookingId(1);
-		booking.setFlightId(fligh);
-		booking.setUserId(1);
-		Passenger passenger = new Passenger();
-		passenger.setAge(30);
-		passenger.setBooking(booking);
-		passenger.setGender("male");
-		passenger.setMealPreference("non veg");
-		passenger.setName("mahendra");
-		passenger.setPassengerId(1);
-		passenger.setSeatPreference("G5");
-		List<Booking> bookingList = new ArrayList<>();
-		bookingList.add(booking);
-		List<Passenger> passengerList = new ArrayList<>();
-		passengerList.add(passenger);
-		User user = new User();
-		user.setUserName("user1");
-		user.setUserId(1);
-		user.setPassword("xyz");
-		when(usersRepository.findByUserName("user1")).thenReturn(Optional.of(user));
-		when(bookingRepository.findByUserId(1)).thenReturn(bookingList);	
-		assertThrows(InvalidUserCredentials.class, () -> {
+	BookingController bookingControler;
 
-			bookingServiceImpl.getBookingHistory("user");
-		});
-		
-	}
 	@Test
-	void getBookingHistory() {
+	void getBookingHistory() throws Exception {
 		
-
 		User user = new User();
 		user.setUserName("user1");
 		user.setUserId(1);
@@ -111,35 +81,39 @@ class BookingServiceImplTest {
 		booking.setPassengers(passengerList);
 		List<Booking> bookingList = new ArrayList<>();
 		bookingList.add(booking);
-		BookingDetails bookingDetails = new BookingDetails();
+		Booking bookingDetails = new Booking();
 		FlightDetails flightDetails = new FlightDetails();
 		PassengerDetails passengerDetails = new PassengerDetails();
 		BeanUtils.copyProperties(fligh,flightDetails);
 		List<PassengerDetails> passengerDetailsList = new ArrayList<>();
 		BeanUtils.copyProperties(passenger,passengerDetails);
 		passengerDetailsList.add(passengerDetails);
-		bookingDetails.setPassengerDetails(passengerDetailsList);
-		List<BookingDetails> bookingDetailsList = new ArrayList<>();
+		bookingDetails.setPassengers(passengerList);
+		List<Booking> bookingDetailsList = new ArrayList<>();
 		bookingDetailsList.add(bookingDetails);
+		BookingDetails bd = new BookingDetails();
+		bd.setBookingId(bookingDetails.getBookingId());
+		bd.setPassengerDetails(passengerDetailsList);
+		bd.setFlightDetails(flightDetails);
+		List<BookingDetails> bDList = new ArrayList<>();
+		bDList.add(bd);
 		BookingHistory bookingHistory = new BookingHistory();
 		bookingHistory.setUserName(user.getUserName());
-		bookingHistory.setBookingDetails(bookingDetailsList);
-		when(usersRepository.findByUserName("user1")).thenReturn(Optional.of(user));
-		when(bookingRepository.findByUserId(1)).thenReturn(bookingList);
-		 BookingHistory bookingHistorytest  =   bookingServiceImpl.getBookingHistory("user1");
-		 assertEquals("user1", bookingHistorytest.getUserName()); 
-	
+		bookingHistory.setBookingDetails(bDList);
+		when(bookingService.getBookingHistory("user1")).thenReturn(bookingHistory);
+		
+		assertEquals("user1", bookingHistory.getUserName());
+		
 		
 	}
+
 	@Test
-	void getBookingHistoryFail() {
-		
+	void getBookingHistoryFail()  {
 		
 		User user = new User();
 		user.setUserName("user1");
 		user.setUserId(1);
-		user.setPassword("xyz");
-		
+		user.setPassword("xyz");	
 		Flight fligh = new Flight();
 		fligh.setFlightId(1);
 		fligh.setDate(new Date(2022,02,01));
@@ -147,12 +121,10 @@ class BookingServiceImplTest {
 		fligh.setFlightName("Air545");
 		fligh.setSource("Chennai");
 		fligh.setTime("8:30");
-		
 		Booking booking = new Booking();
 		booking.setBookingId(1);
 		booking.setFlightId(fligh);
 		booking.setUserId(1);
-		
 		Passenger passenger = new Passenger();
 		passenger.setAge(30);
 		passenger.setBooking(booking);
@@ -161,43 +133,62 @@ class BookingServiceImplTest {
 		passenger.setName("mahendra");
 		passenger.setPassengerId(1);
 		passenger.setSeatPreference("G5");
-		
 		List<Passenger> passengerList = new ArrayList<>();
 		passengerList.add(passenger);
-		
-		
 		booking.setPassengers(passengerList);
-		
 		List<Booking> bookingList = new ArrayList<>();
 		bookingList.add(booking);
-		
-		
-		
-		BookingDetails bookingDetails = new BookingDetails();
+		Booking bookingDetails = new Booking();
 		FlightDetails flightDetails = new FlightDetails();
 		PassengerDetails passengerDetails = new PassengerDetails();
-		
 		BeanUtils.copyProperties(fligh,flightDetails);
 		List<PassengerDetails> passengerDetailsList = new ArrayList<>();
-		
-		passengerDetails.setAge(passenger.getAge());
-		passengerDetails.setGender(passenger.getGender());
-		passengerDetails.setMealPreference(passenger.getMealPreference());
-		passengerDetails.setName(passenger.getName());
-		passengerDetails.setSeatPreference(passenger.getSeatPreference());
+		BeanUtils.copyProperties(passenger,passengerDetails);
 		passengerDetailsList.add(passengerDetails);
-		bookingDetails.setPassengerDetails(passengerDetailsList);
-		List<BookingDetails> bookingDetailsList = new ArrayList<>();
+		bookingDetails.setPassengers(passengerList);
+		List<Booking> bookingDetailsList = new ArrayList<>();
 		bookingDetailsList.add(bookingDetails);
+		BookingDetails bd = new BookingDetails();
+		bd.setBookingId(bookingDetails.getBookingId());
+		bd.setPassengerDetails(passengerDetailsList);
+		bd.setFlightDetails(flightDetails);
+		List<BookingDetails> bDList = new ArrayList<>();
+		bDList.add(bd);
 		BookingHistory bookingHistory = new BookingHistory();
 		bookingHistory.setUserName(user.getUserName());
-		bookingHistory.setBookingDetails(bookingDetailsList);
-		//BookingServiceImpl mockBookingService = mock(BookingServiceImpl.class);
-		when(usersRepository.findByUserName("user1")).thenReturn(Optional.of(user));
-		when(bookingRepository.findByUserId(1)).thenReturn(bookingList);
-		 BookingHistory bookingHistorytest  =   bookingServiceImpl.getBookingHistory("user1");
-		 assertNotEquals("user", bookingHistorytest.getUserName()); 
-	
+		bookingHistory.setBookingDetails(bDList);
+		when(bookingService.getBookingHistory("user1")).thenReturn(bookingHistory);
+		
+		assertNotNull("user", bookingHistory.getUserName());
+		
 		
 	}
+
+
+
+
+
+
+@Test
+@DisplayName("book Ticket")
+@Order(1)
+	void testAvailableBalancePostive() {
+
+		Booking bookingDetailsSaved = new Booking();
+		bookingDetailsSaved.setBookingId(1);
+
+		BookingDto bookingDetailsDto = new BookingDto();
+		bookingDetailsDto.setUserId(1);
+		
+		Mockito.when(bookingService.bookTicket(bookingDetailsDto)).thenReturn(bookingDetailsSaved);
+
+		ResponseEntity<?> result = bookingControler.bookTicket(bookingDetailsDto);
+
+		Booking bookingDetailsResponse = (Booking) result.getBody();
+		assertNotNull(bookingDetailsResponse);
+		assertEquals(1, bookingDetailsResponse.getBookingId());
+
+
+
+		}
 }

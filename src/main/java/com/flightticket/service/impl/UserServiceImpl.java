@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
   
 
     public UserDetails loadUserByUsername(String username)  {
+    	logger.info("Getting the user details");
         Optional<User> userDetails = userRepository.findByUserName(username);
         if(userDetails.isPresent()){
         	User user = userDetails.get();
@@ -42,6 +43,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     private Set<SimpleGrantedAuthority> getAuthority(User user) {
+    	logger.info("Getting the user Role");
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         user.getRoles().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));

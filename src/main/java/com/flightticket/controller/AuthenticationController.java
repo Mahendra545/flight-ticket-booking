@@ -1,5 +1,7 @@
 package com.flightticket.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +33,12 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
+    private final Logger logger = LogManager.getLogger(AuthenticationController.class);
+    
     @PostMapping(value = "/login")
     public ResponseEntity<AuthToken> generateToken(@RequestBody LoginUser loginUser) throws AuthenticationException {
     	try {
+    		logger.info("Checking the authentication");
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginUser.getUserName(),
@@ -42,9 +47,12 @@ public class AuthenticationController {
         );
         final User user = userService.findOne(loginUser.getUserName());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        logger.info("Generation the JWT Token");
         final String token = jwtTokenUtil.generateToken(authentication);
+        logger.info("Sending the JWT Token");
         return new ResponseEntity<>(new AuthToken(token,user.getUserName()),HttpStatus.OK);
     	}catch (AuthenticationException e) {
+    		logger.error("Invaild Credentials");
 			throw new InvalidUserCredentials("Invaild Credentials");
 			
 		}

@@ -19,5 +19,6 @@ public class BookingHistory {
 		this.bookingDetails = bookingDetails;
 	}
 	
+	
 
 }

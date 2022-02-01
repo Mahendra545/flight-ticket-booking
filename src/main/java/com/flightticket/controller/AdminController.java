@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.flightticket.dto.FlightDetailsRequest;
 import com.flightticket.dto.FlightDetailsResponse;
-import com.flightticket.entity.Flight;
 import com.flightticket.service.AdminService;
 
 import io.swagger.v3.oas.annotations.Operation;

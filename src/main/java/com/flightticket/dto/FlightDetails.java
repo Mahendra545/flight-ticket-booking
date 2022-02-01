@@ -10,7 +10,7 @@ public class FlightDetails {
 	private String flightName;
 	private String source;
 	private String destination;
-	@JsonFormat(pattern="dd-MM-yyyy")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd/MM/yyyy")
 	private Date date;
 	private String time;
 	public String getFlightName() {
